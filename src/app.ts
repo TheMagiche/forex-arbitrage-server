@@ -1,38 +1,52 @@
-import cors from 'cors';
-import express from 'express';
-import { createServer, Server } from 'http';
+import cors from 'cors'
+import express from 'express'
+import {createServer, Server} from 'http'
+import { getAllCurrencyCodes, computeArbitrage } from './routes'
 
 export default class App {
+  private app: express.Express
+  private server: Server
+  private port: number | string
 
-    private app: express.Application;
-    private server: Server;
-    private port: number | string;
+  constructor() {
+    this.port = process.env.PORT || 4000
+    this.app = express()
+    this.server = createServer(this.app)
+    this.configs()
+    this.routes()
+  }
 
-    constructor() {
-        this.port = process.env.PORT || 5000;
-        this.app = express();
-        this.server = createServer(this.app);
-        this.configs();
-    }
+  public getApp(): express.Express {
+    return this.app
+  }
 
-    public async start(): Promise<void> {
-        const port = this.normalizePort(this.port);
-        this.server.listen(port, () => {
-            console.log(`Server process: ${process.pid} listening on port: ${port}`);
-        });
-    }
-    private configs() {
-        this.app.use(express.urlencoded({ extended: true }));
-        this.app.use(express.json());
-        this.app.use(cors({ origin: true, credentials: true, preflightContinue: true }));
-    }
+  public async start(): Promise<void> {
+    const port = this.normalizePort(this.port)
+    this.server.listen(port, () => {
+      console.log(`Server process: ${process.pid} listening on port: ${port}`)
+    })
+  }
+  private configs() {
+    this.app.use(express.urlencoded({extended: true}))
+    this.app.use(express.json())
+    this.app.use(
+      cors({origin: true, credentials: true, preflightContinue: true})
+    )
+  }
 
-    private normalizePort(port: string | number): number {
-        if (typeof port !== 'string' && typeof port !== 'number') {
-            throw new TypeError(`Argument of type ${typeof port} cannot be used as port!`);
-        }
-        return Number(port);
+  private routes() {
+    this.app.get('/api/currencies', getAllCurrencyCodes)
+    this.app.post('/api/arbitrage', computeArbitrage)
+  }
+
+  private normalizePort(port: string | number): number {
+    if (typeof port !== 'string' && typeof port !== 'number') {
+      throw new TypeError(
+        `Argument of type ${typeof port} cannot be used as port!`
+      )
     }
+    return Number(port)
+  }
 }
 
-new App().start();
+new App().start()
