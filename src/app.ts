@@ -3,7 +3,7 @@ import express from 'express'
 import {createServer, Server} from 'http'
 import {computeArbitrage} from './routes/arbitrage'
 import {getAllCurrencyCodes} from './routes/currency'
-import cron from 'node-cron'
+import * as nodeCron from 'node-cron'
 import {getArbitrageData} from './helpers/arbitrage'
 export default class App {
   private app: express.Express
@@ -34,10 +34,6 @@ export default class App {
     this.app.use(
       cors({origin: true, credentials: true, preflightContinue: true})
     )
-    //get arbitrage data after one day
-    cron.schedule('* * 1 * * *', () => {
-      getArbitrageData()
-    })
   }
 
   private routes() {
@@ -56,3 +52,17 @@ export default class App {
 }
 
 new App().start()
+
+// // get arbitrage data after one day
+// const task = nodeCron.schedule(
+//   '* * * 10 * *',
+//   () => {
+//     console.log('starting cron...')
+//    
+//   },
+//   {
+//     scheduled: false
+//   }
+// )
+
+// task.start()
