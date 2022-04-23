@@ -31,7 +31,6 @@
  */
 
 import {Graph} from './graph'
-import * as currencies from '../data/currencies.json'
 import Axios from 'axios'
 import fs from 'fs'
 
@@ -45,14 +44,167 @@ interface IExchangeRateResponse {
 }
 
 export async function getArbitrageData(api_key: string) {
+  console.log('Fetching arbitrage data ....')
   let arbitrageData: any = {}
+  const currencies = [
+    'AED',
+    'AFN',
+    'ALL',
+    'AMD',
+    'ANG',
+    'AOA',
+    'ARS',
+    'AUD',
+    'AWG',
+    'AZN',
+    'BAM',
+    'BBD',
+    'BDT',
+    'BGN',
+    'BHD',
+    'BIF',
+    'BMD',
+    'BND',
+    'BOB',
+    'BRL',
+    'BSD',
+    'BTN',
+    'BWP',
+    'BZD',
+    'CAD',
+    'CDF',
+    'CHF',
+    'CLF',
+    'CLP',
+    'CNH',
+    'CNY',
+    'COP',
+    'CUP',
+    'CVE',
+    'CZK',
+    'DJF',
+    'DKK',
+    'DOP',
+    'DZD',
+    'EGP',
+    'ERN',
+    'ETB',
+    'EUR',
+    'FJD',
+    'FKP',
+    'GBP',
+    'GEL',
+    'GHS',
+    'GIP',
+    'GMD',
+    'GNF',
+    'GTQ',
+    'GYD',
+    'HKD',
+    'HNL',
+    'HRK',
+    'HTG',
+    'HUF',
+    'IDR',
+    'ILS',
+    'INR',
+    'IQD',
+    'IRR',
+    'ISK',
+    'JMD',
+    'JOD',
+    'JPY',
+    'KES',
+    'KGS',
+    'KHR',
+    'KMF',
+    'KPW',
+    'KRW',
+    'KWD',
+    'KYD',
+    'KZT',
+    'LAK',
+    'LBP',
+    'LKR',
+    'LRD',
+    'LSL',
+    'LYD',
+    'MAD',
+    'MDL',
+    'MGA',
+    'MKD',
+    'MMK',
+    'MNT',
+    'MOP',
+    'MRU',
+    'MUR',
+    'MVR',
+    'MWK',
+    'MXN',
+    'MYR',
+    'MZN',
+    'NAD',
+    'NGN',
+    'NOK',
+    'NPR',
+    'NZD',
+    'OMR',
+    'PAB',
+    'PEN',
+    'PGK',
+    'PHP',
+    'PKR',
+    'PLN',
+    'PYG',
+    'QAR',
+    'RON',
+    'RSD',
+    'RUB',
+    'RWF',
+    'SAR',
+    'SCR',
+    'SDG',
+    'SEK',
+    'SGD',
+    'SHP',
+    'SLL',
+    'SOS',
+    'SRD',
+    'SYP',
+    'SZL',
+    'THB',
+    'TJS',
+    'TMT',
+    'TND',
+    'TOP',
+    'TRY',
+    'TTD',
+    'TWD',
+    'TZS',
+    'UAH',
+    'UGX',
+    'USD',
+    'UYU',
+    'UZS',
+    'VND',
+    'VUV',
+    'WST',
+    'XAF',
+    'XCD',
+    'XDR',
+    'XOF',
+    'XPF',
+    'YER',
+    'ZAR',
+    'ZMW'
+  ]
   for (let i in currencies) {
     await Axios.get<IExchangeRateResponse>(
       `https://api.fastforex.io/fetch-all?from=${currencies[i]}&api_key=${api_key}`
     )
       .then(response => {
         arbitrageData[currencies[i]] = response.data.results
-        console.log('saved...')
+        console.log('saved ', currencies[i])
       })
       .catch(error => {
         console.log(error.response)
@@ -69,7 +221,6 @@ export async function getArbitrageData(api_key: string) {
     }
   )
   console.log('Data fetch complete .....')
-  return arbitrageData
 }
 
 export default function ArbitrageCalculator(
@@ -86,6 +237,6 @@ export default function ArbitrageCalculator(
   // console.log(graph.showEdges())
   // console.log(graph.showVertices())
   let results = graph.getMaxNegativeCycle(exchangeRates, base_currency)
-  console.log({results})
+  // console.log({results})
   return results
 }

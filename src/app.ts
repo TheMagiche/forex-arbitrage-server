@@ -1,8 +1,10 @@
+import dotenv from 'dotenv'
 import cors from 'cors'
 import express, {Express, Request, Response, NextFunction} from 'express'
 import {createServer, Server} from 'http'
 import {computeArbitrage} from './routes/arbitrage'
 import {getAllCurrencyCodes} from './routes/currency'
+import {getArbitrageData} from './helpers/arbitrage'
 export default class App {
   private app: Express
   private server: Server
@@ -29,7 +31,10 @@ export default class App {
   private configs() {
     this.app.use(express.urlencoded({extended: true}))
     this.app.use(express.json())
-    this.app.use(cors({origin: true, credentials: true, preflightContinue: true}))
+    dotenv.config()
+    this.app.use(
+      cors({origin: true, credentials: true, preflightContinue: true})
+    )
     this.app.use((req: Request, res: Response, next: NextFunction) => {
       res.header('Access-Control-Allow-Origin', '*')
       res.header(
@@ -45,6 +50,8 @@ export default class App {
   }
 
   private routes() {
+    // set up cron job to update currency data after every 10 minutes
+    getArbitrageData(process.env.API_KEY as string)
     this.app.get('/api/currencies', getAllCurrencyCodes)
     this.app.post('/api/arbitrage', computeArbitrage)
   }
@@ -60,4 +67,3 @@ export default class App {
 }
 
 new App().start()
-
