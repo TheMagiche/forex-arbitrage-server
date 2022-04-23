@@ -1,3 +1,5 @@
+import { generateFlag } from "./flag"
+
 class Edge {
   public source: string
   public destination: string
@@ -55,7 +57,9 @@ export class Graph {
         source: path[i],
         destination: path[i + 1],
         rate: data[path[i]][path[i + 1]],
-        total: result
+        total: result,
+        flag_src: generateFlag(path[i]),
+        flag_des: generateFlag(path[i+1])
       })
     }
     return final

@@ -1,12 +1,10 @@
 import cors from 'cors'
-import express from 'express'
+import express, {Express, Request, Response, NextFunction} from 'express'
 import {createServer, Server} from 'http'
 import {computeArbitrage} from './routes/arbitrage'
 import {getAllCurrencyCodes} from './routes/currency'
-import * as nodeCron from 'node-cron'
-import {getArbitrageData} from './helpers/arbitrage'
 export default class App {
-  private app: express.Express
+  private app: Express
   private server: Server
   private port: number | string
 
@@ -18,7 +16,7 @@ export default class App {
     this.routes()
   }
 
-  public getApp(): express.Express {
+  public getApp(): Express {
     return this.app
   }
 
@@ -31,9 +29,19 @@ export default class App {
   private configs() {
     this.app.use(express.urlencoded({extended: true}))
     this.app.use(express.json())
-    this.app.use(
-      cors({origin: true, credentials: true, preflightContinue: true})
-    )
+    this.app.use(cors({origin: true, credentials: true, preflightContinue: true}))
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      res.header('Access-Control-Allow-Origin', '*')
+      res.header(
+        'Access-Control-Allow-Methods',
+        'GET, POST, OPTIONS, PUT, PATCH, DELETE'
+      )
+      res.header(
+        'Access-Control-Allow-Headers',
+        'x-access-token, Origin, X-Requested-With, Content-Type, Accept'
+      )
+      next()
+    })
   }
 
   private routes() {
@@ -53,16 +61,3 @@ export default class App {
 
 new App().start()
 
-// // get arbitrage data after one day
-// const task = nodeCron.schedule(
-//   '* * * 10 * *',
-//   () => {
-//     console.log('starting cron...')
-//    
-//   },
-//   {
-//     scheduled: false
-//   }
-// )
-
-// task.start()
