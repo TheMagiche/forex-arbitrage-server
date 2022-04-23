@@ -1,8 +1,10 @@
 import cors from 'cors'
 import express from 'express'
 import {createServer, Server} from 'http'
-import { getAllCurrencyCodes, computeArbitrage } from './routes'
-
+import {computeArbitrage} from './routes/arbitrage'
+import {getAllCurrencyCodes} from './routes/currency'
+import cron from 'node-cron'
+import {getArbitrageData} from './helpers/arbitrage'
 export default class App {
   private app: express.Express
   private server: Server
@@ -32,6 +34,10 @@ export default class App {
     this.app.use(
       cors({origin: true, credentials: true, preflightContinue: true})
     )
+    //get arbitrage data after one day
+    cron.schedule('* * 1 * * *', () => {
+      getArbitrageData()
+    })
   }
 
   private routes() {
