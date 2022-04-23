@@ -1,16 +1,18 @@
 import fs from 'fs'
 import {Request, Response} from 'express'
 import Axios from 'axios'
+import { getArbitrageData } from '../helpers/arbitrage'
 
 interface ICurrencyResponse {
-  [key: string]: string
+  currencies: {[key: string]: string}
+  ms: string
 }
 
 export async function getAllCurrencyCodes(req: Request, res: Response) {
   const currencies = await Axios.get<ICurrencyResponse>(
-    'https://openexchangerates.org/api/currencies.json'
+    `https://api.fastforex.io/currencies?api_key=ce56d9f0c3-c89df90123-rasg3h`
   ).then(response => {
-    return response.data
+    return response.data.currencies
   })
 
   let expectedCurrencies: string[] = []

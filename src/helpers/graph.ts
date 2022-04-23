@@ -1,8 +1,8 @@
 class Edge {
-  private source: string
-  private destination: string
-  private rate: number
-  private weight: number
+  public source: string
+  public destination: string
+  public rate: number
+  public weight: number
 
   constructor(source: string, destination: string, rate: number) {
     this.source = source
@@ -25,9 +25,16 @@ export class Graph {
     this.vertices.add(vertex)
   }
 
+  public showEdges() {
+    return this.edges
+  }
+  public showVertices(){
+    return this.vertices
+  }
+
   public setEdge(source: string, destination: string, rate: number) {
     this.setVertex(source)
-    this.setVertex(source)
+    this.setVertex(destination)
     this.edges.push(new Edge(source, destination, rate))
   }
 
@@ -53,18 +60,19 @@ export class Graph {
     }
     return final
   }
+
   public getMaxNegativeCycle(data: any, start_node: any) {
-    let dist: any = {}
+    let distance: any = {}
     let parent: any = {}
 
     // Step 1: Initialize distances from src to all other vertices as INFINITE
     for (let i of this.vertices) {
-      dist[i] = Number.MAX_VALUE
+      distance[i] = Number.MAX_VALUE
       parent[i] = -1
     }
 
     // Set  start_node to 0
-    dist[start_node] = 0
+    distance[start_node] = 0
 
     // Step 2: Relax all edges |V| - 1 times.
     // A simple shortest path from src to any other vertex can have at-most |V| - 1 edges
@@ -73,8 +81,8 @@ export class Graph {
         let u = this.edges[j].src
         let v = this.edges[j].dest
         let weight = this.edges[j].weight
-        if (dist[u] != Number.MAX_VALUE && dist[u] + weight < dist[v]) {
-          dist[v] = dist[u] + weight
+        if (distance[u] != Number.MAX_VALUE && distance[u] + weight < distance[v]) {
+          distance[v] = distance[u] + weight
           parent[v] = u
         }
       }
@@ -86,14 +94,14 @@ export class Graph {
     let maxArbitrageRate = 1
     for (let i = 0; i < this.vertices.size; i++) {
       for (let j in this.edges) {
-        let srcNode = this.edges[j].src
-        let destNode = this.edges[j].dest
+        let srcNode = this.edges[j].source
+        let destNode = this.edges[j].destination
         let weight = this.edges[j].weight
         if (
-          dist[srcNode] != Number.MAX_VALUE &&
-          dist[srcNode] + weight < dist[destNode]
+          distance[srcNode] != Number.MAX_VALUE &&
+          distance[srcNode] + weight < distance[destNode]
         ) {
-          dist[destNode] = dist[srcNode] + weight
+          distance[destNode] = distance[srcNode] + weight
           parent[destNode] = srcNode
           if (destNode === start_node) {
             const path: any = []

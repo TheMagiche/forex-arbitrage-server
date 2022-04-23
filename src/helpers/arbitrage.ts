@@ -36,27 +36,26 @@ import Axios from 'axios'
 import fs from 'fs'
 
 interface IExchangeRateResponse {
-  meta: {last_updated_at: Date}
-  data: {
-    [key: string]: {
-      code: string
-      value: number
-    }
+  base: string
+  results: {
+    [key: string]: number
   }
+  updated: string
+  ms: number
 }
 
-export async function getArbitrageData() {
+export async function getArbitrageData(api_key: string) {
   let arbitrageData: any = {}
-  for (const currency in currencies) {
+  for (let i in currencies) {
     await Axios.get<IExchangeRateResponse>(
-      `https://api.currencyapi.com/v3/latest?apiKey=${process.env.API_KEY}&base_currency=${currency}`
+      `https://api.fastforex.io/fetch-all?from=${currencies[i]}&api_key=${api_key}`
     )
       .then(response => {
-        arbitrageData[currency] = response.data.data
+        arbitrageData[currencies[i]] = response.data.results
+        console.log('saved...')
       })
       .catch(error => {
-        console.log(error)
-        return null
+        console.log(error.response)
       })
   }
   fs.writeFile(
@@ -69,6 +68,7 @@ export async function getArbitrageData() {
       console.log('Arbitrage file saved')
     }
   )
+  console.log('Data fetch complete .....')
   return arbitrageData
 }
 
@@ -83,6 +83,9 @@ export default function ArbitrageCalculator(
       graph.setEdge(source, destination, exchangeRates[source][destination])
     }
   }
+  // console.log(graph.showEdges())
+  // console.log(graph.showVertices())
   let results = graph.getMaxNegativeCycle(exchangeRates, base_currency)
+  console.log({results})
   return results
 }
