@@ -11,7 +11,7 @@ interface ICurrencyResponse {
 export async function getAllCurrencyCodes(req: Request, res: Response) {
   try {
     const currencies = await Axios.get<ICurrencyResponse>(
-      `https://api.fastforex.io/currencies?api_key=ce56d9f0c3-c89df90123-rasg3h`
+      `https://api.fastforex.io/currencies?api_key=${process.env.API_KEY}`
     ).then(response => {
       return response.data.currencies
     })
