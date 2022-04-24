@@ -1,8 +1,6 @@
 import fs from 'fs'
 import {Request, Response} from 'express'
 import Axios from 'axios'
-import {getArbitrageData} from '../helpers/arbitrage'
-
 interface ICurrencyResponse {
   currencies: {[key: string]: string}
   ms: string

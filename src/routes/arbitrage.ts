@@ -1,6 +1,6 @@
 import {Request, Response} from 'express'
 import Axios from 'axios'
-import ArbitrageCalculator, {getArbitrageData} from '../helpers/arbitrage'
+import ArbitrageCalculator from '../helpers/arbitrage'
 import * as sample from '../data/sampleRate.json'
 import * as arbitrage from '../data/arbitrage.json'
 interface IExchangeRateResponse {
