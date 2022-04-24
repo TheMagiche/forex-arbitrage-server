@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import cors from 'cors'
+import cron from 'node-cron'
 import express, {Express, Request, Response, NextFunction} from 'express'
 import {createServer, Server} from 'http'
 import {computeArbitrage} from './routes/arbitrage'
@@ -51,7 +52,9 @@ export default class App {
 
   private routes() {
     // set up cron job to update currency data after every 10 minutes
-    getArbitrageData(process.env.API_KEY as string)
+    cron.schedule(`*/10 * * * *`, () => {
+      getArbitrageData(process.env.API_KEY as string)
+    })
     this.app.get('/api/currencies', getAllCurrencyCodes)
     this.app.post('/api/arbitrage', computeArbitrage)
   }
