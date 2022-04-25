@@ -1,4 +1,4 @@
-import { generateFlag } from "./flag"
+import {generateFlag} from './flag'
 
 class Edge {
   public source: string
@@ -30,7 +30,7 @@ export class Graph {
   public showEdges() {
     return this.edges
   }
-  public showVertices(){
+  public showVertices() {
     return this.vertices
   }
 
@@ -59,7 +59,7 @@ export class Graph {
         rate: data[path[i]][path[i + 1]],
         total: result,
         flag_src: generateFlag(path[i]),
-        flag_des: generateFlag(path[i+1])
+        flag_des: generateFlag(path[i + 1])
       })
     }
     return final
@@ -85,7 +85,10 @@ export class Graph {
         let u = this.edges[j].src
         let v = this.edges[j].dest
         let weight = this.edges[j].weight
-        if (distance[u] != Number.MAX_VALUE && distance[u] + weight < distance[v]) {
+        if (
+          distance[u] != Number.MAX_VALUE &&
+          distance[u] + weight < distance[v]
+        ) {
           distance[v] = distance[u] + weight
           parent[v] = u
         }
