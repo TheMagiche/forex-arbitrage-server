@@ -30,9 +30,9 @@
  *
  */
 
-import {Graph} from './graph'
 import Axios from 'axios'
 import fs from 'fs'
+import {Graph} from './graph'
 
 interface IExchangeRateResponse {
   base: string
@@ -234,9 +234,6 @@ export default function ArbitrageCalculator(
       graph.setEdge(source, destination, exchangeRates[source][destination])
     }
   }
-  // console.log(graph.showEdges())
-  // console.log(graph.showVertices())
   let results = graph.getMaxNegativeCycle(exchangeRates, base_currency)
-  // console.log({results})
   return results
 }
