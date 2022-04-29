@@ -82,8 +82,8 @@ export class Graph {
     // A simple shortest path from src to any other vertex can have at-most |V| - 1 edges
     for (let i = 0; i < this.vertices.size; i++) {
       for (let j in this.edges) {
-        let u = this.edges[j].src
-        let v = this.edges[j].dest
+        let u = this.edges[j].source
+        let v = this.edges[j].destination
         let weight = this.edges[j].weight
         if (
           distance[u] != Number.MAX_VALUE &&
